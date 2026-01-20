@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy import Column, MetaData
 from sqlalchemy.dialects.postgresql import UUID
+from typing import Any
 from sqlalchemy.orm import declarative_base
 
 meta = MetaData(
@@ -13,10 +14,10 @@ meta = MetaData(
     }
 )
 
-Base = declarative_base(metadata=meta)
+Base: Any = declarative_base(metadata=meta)
 
 
-class BaseModel(Base):  # type: ignore
+class BaseModel(Base):
     __abstract__ = True
     id = Column(
         UUID(as_uuid=True),
