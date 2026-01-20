@@ -12,6 +12,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 # Set the working directory
 WORKDIR /app
 
+ENV PYTHONPATH=/app
 # Install uv
 RUN pip install uv
 
@@ -26,7 +27,7 @@ COPY . /app
 RUN chown -R appuser:appgroup /app
 
 # Switch to the non-root user
-USER appuser
+# USER appuser
 
 # Expose the port the app runs on
 EXPOSE 8000

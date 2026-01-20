@@ -8,6 +8,7 @@ dependencies = [
     "fastapi",
     "pydantic",
     "pydantic-settings",
+    "pydantic[email]",
     "SQLAlchemy[asyncio]",
     "psycopg2-binary",
     "alembic",
@@ -15,10 +16,11 @@ dependencies = [
     "celery",
     "uvicorn[standard]",
     "python-jose[cryptography]",
-    "passlib[bcrypt]",
+    "passlib[argon2]",
     "tenacity",
     "structlog",
     "python-json-logger",
+    "asyncpg",
 ]
 
 [project.optional-dependencies]

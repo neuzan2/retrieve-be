@@ -100,6 +100,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
 .venv
 env/
 venv/
@@ -127,3 +128,6 @@ dmypy.json
 
 # pytype static analyzer
 .pytype/
+
+# Ruff
+.ruff-cache/
