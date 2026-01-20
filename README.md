@@ -46,7 +46,7 @@ main.py
 
 - Python 3.12+
 - Docker
-- `uv`
+- `uv` (installed via `pip install uv`)
 
 ### Installation
 
@@ -67,11 +67,19 @@ main.py
 
 3.  **Set up the environment variables:**
 
-    Copy the `.env.example` file to `.env` and update the values as needed.
+    Copy the `.env.example` file to `.env`. This file will be used by the Docker containers.
 
     ```bash
     cp .env.example .env
     ```
+
+    For local development and running migrations on the host, create a `.env.local` file with database settings pointing to `localhost`:
+
+    ```bash
+    cp .env.example .env.local
+    # Edit .env.local to change POSTGRES_HOST to localhost and POSTGRES_PORT to 5432
+    ```
+    Ensure `POSTGRES_HOST=localhost` and `POSTGRES_PORT=5432` in your `.env.local` if you plan to run Alembic migrations directly on your host machine against the Dockerized database.
 
 4.  **Install pre-commit hooks:**
 
@@ -79,34 +87,57 @@ main.py
     pre-commit install
     ```
 
+### Using the Makefile
+
+This project includes a `Makefile` to simplify common development tasks.
+
+```bash
+make help
+```
+
 ### Running the application with Docker
 
-To run the application with Docker Compose, use the following command:
+To build and run the application using Docker Compose:
 
 ```bash
-docker-compose up -d
+make docker-build
+make docker-up
 ```
-
 The API will be available at `http://localhost:8000`.
+The PostgreSQL database will be accessible at `localhost:5432`.
 
-### Running the application locally
+### Running the application locally (for development)
 
-To run the application locally, use the following command:
+Ensure you have activated your virtual environment (`source .venv/bin/activate`).
 
 ```bash
-uvicorn main:app --reload
+make run
 ```
 
-### Running migrations
+### Running migrations (on host against Dockerized DB)
 
-To create a new migration, use the following command:
+To create a new migration:
 
 ```bash
-alembic revision --autogenerate -m "Your migration message"
+make makemigrations m="Your migration message"
+```
+This command will create a new migration file in `app/db/migrations/versions/`. These files will be automatically picked up by Docker when the image is rebuilt or containers are restarted.
+
+To apply the migrations:
+
+```bash
+make migrate
 ```
 
-To apply the migrations, use the following command:
+### Running Tests
 
 ```bash
-alembic upgrade head
+make test
+```
+
+### Linting and Formatting
+
+```bash
+make lint
+make format
 ```
