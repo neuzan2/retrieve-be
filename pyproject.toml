@@ -17,6 +17,7 @@ dependencies = [
     "uvicorn[standard]",
     "python-jose[cryptography]",
     "passlib[argon2]",
+    "argon2_cffi",
     "tenacity",
     "structlog",
     "python-json-logger",
