@@ -1,4 +1,4 @@
-.PHONY: help install run test lint format makemigrations migrate docker-build docker-up docker-down docker-logs docker-shell
+.PHONY: help install run test lint format makemigrations migrate docker-build docker-up docker-down docker-logs docker-shell startapp
 
 # ====================================================================================
 # HELP
@@ -13,6 +13,9 @@ help:
 	@echo "  make test         Run tests"
 	@echo "  make lint         Run linters"
 	@echo "  make format       Format code"
+	@echo ""
+	@echo "App Management:"
+	@echo "  make startapp <name>      Create a new app (or use app=<name>)"
 	@echo ""
 	@echo "Database Migrations:"
 	@echo "  make makemigrations  Create a new database migration"
@@ -36,7 +39,7 @@ install:
 
 run:
 	@echo "Starting application..."
-	uvicorn main:app --reload
+	uvicorn src.main:app --reload
 
 test:
 	@echo "Running tests..."
@@ -62,6 +65,30 @@ makemigrations:
 migrate:
 	@echo "Applying database migrations..."
 	alembic upgrade head
+
+# ====================================================================================
+# APP MANAGEMENT
+# ====================================================================================
+
+# Handle "make startapp <name>" syntax
+ifeq (startapp,$(firstword $(MAKECMDGOALS)))
+  # Valid arguments for startapp (anything after 'startapp')
+  STARTAPP_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # Turn them into do-nothing targets
+  $(eval $(STARTAPP_ARGS):;@:)
+endif
+
+startapp:
+	@echo "Creating new app..."
+	@if [ -n "$(STARTAPP_ARGS)" ]; then \
+		uv run python scripts/startapp.py $(STARTAPP_ARGS); \
+	elif [ -n "$(app)" ]; then \
+		uv run python scripts/startapp.py $(app); \
+	else \
+		printf "Enter App Name: "; \
+		read app_name; \
+		uv run python scripts/startapp.py $$app_name; \
+	fi
 
 # ====================================================================================
 # DOCKER

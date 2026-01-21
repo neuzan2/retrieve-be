@@ -1,0 +1,4 @@
+"""
+Services module for the application. This module contains service classes and functions
+that handle business logic and interact with data models.
+"""

@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Create a non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Set the working directory
 WORKDIR /app
@@ -24,7 +24,7 @@ RUN uv pip install --system --no-cache -r pyproject.toml
 COPY . /app
 
 # Chown the app directory
-RUN chown -R appuser:appgroup /app
+# RUN chown -R appuser:appgroup /app
 
 # Switch to the non-root user
 # USER appuser

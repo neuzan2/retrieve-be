@@ -1,0 +1,20 @@
+import uuid
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+router = APIRouter(
+    prefix="{{app_name}}",
+    tags=["{{app_name}}"],
+)
+
+@router.get("/{{app_name}}")
+async def read_{{app_name}}(
+    db: AsyncSession = Depends(),  # Replace with actual dependency to get DB session
+):
+    """
+    Endpoint to read {{app_name}} data.
+    Replace with actual implementation.
+    """
+    return {"message": "This is a placeholder endpoint for {{app_name}}."}

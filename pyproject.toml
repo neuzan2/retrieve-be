@@ -24,9 +24,8 @@ dependencies = [
     "asyncpg",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "ruff",
+[dependency-groups]
+dev = ["ruff",
     "mypy",
     "pytest",
     "httpx",

@@ -1,0 +1,9 @@
+import pytest
+from httpx import AsyncClient
+
+@pytest.mark.asyncio
+async def test_read_{{app_name}}(client: AsyncClient):
+    # TODO: Change content of this test to match your app's functionality
+    response = await client.get("/api/v1/{{app_name}}")
+    assert response.status_code == 200
+    assert response.json() == {"message": "This is a placeholder endpoint for {{app_name}}."}

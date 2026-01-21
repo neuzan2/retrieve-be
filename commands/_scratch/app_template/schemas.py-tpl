@@ -1,0 +1,6 @@
+import uuid
+from pydantic import BaseModel
+
+
+class {{ClassName}}Schema(BaseModel):
+    pass
