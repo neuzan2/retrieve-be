@@ -3,12 +3,12 @@ from fastapi import APIRouter, status
 from src.app.auth.schemas import User as UserSchema, UserCreate
 
 router = APIRouter(
-    prefix="/auth",
-    tags=["auth"]
+    prefix="/user",
+    tags=["auth-user"]
 )
 
 
-@router.get("/user/", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
+@router.get("/list/", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
 async def create_user(
         user_create: UserCreate,
 ):

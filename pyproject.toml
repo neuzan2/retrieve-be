@@ -30,6 +30,7 @@ dev = ["ruff",
     "pytest",
     "httpx",
     "pre-commit",
+    "ipdb",
 ]
 
 [tool.ruff]

@@ -39,7 +39,7 @@ install:
 
 run:
 	@echo "Starting application..."
-	uvicorn src.main:app --reload
+	uv run uvicorn src.main:app --reload
 
 test:
 	@echo "Running tests..."

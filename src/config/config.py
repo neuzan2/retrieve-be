@@ -1,3 +1,7 @@
+from functools import cached_property
+from pathlib import Path
+from typing import List, Dict, Union
+
 from pydantic_settings import BaseSettings
 
 
@@ -23,6 +27,16 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    API_CONFIGS: List[Dict[str, Union[str, bool]]] = [
+        {
+            "version": "v1",
+            "is_active": True
+        },
+        {
+            "version": "v2",
+            "is_active": True
+        }
+    ]
 
     class Config:
         case_sensitive = True
@@ -33,5 +47,18 @@ class Settings(BaseSettings):
     @property
     def database_url(self) -> str:
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+
+    @cached_property
+    def BASE_DIR(self) -> Path:
+        return Path(__file__).parent.parent.parent
+
+    @cached_property
+    def SRC_DIR(self) -> Path:
+        return self.BASE_DIR / "src"
+
+    @cached_property
+    def APP_DIR(self) -> Path:
+        return self.BASE_DIR / "src/app"
+
 
 settings = Settings()
