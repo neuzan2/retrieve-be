@@ -50,42 +50,44 @@ main.py
 
 ### Installation
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
 
-    ```bash
-    git clone <repository-url>
-    cd <repository-name>
-    ```
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>
+   ```
 
-2.  **Create a virtual environment and install dependencies:**
+2. **Create a virtual environment and install dependencies:**
 
-    ```bash
-    uv venv
-    source .venv/bin/activate
-    uv pip install -e .[dev]
-    ```
+   ```bash
+   uv venv
+   source .venv/bin/activate
+   uv pip install -e .[dev]
+   ```
 
-3.  **Set up the environment variables:**
+3. **Set up the environment variables:**
 
-    Copy the `.env.example` file to `.env`. This file will be used by the Docker containers.
+   Copy the `.env.example` file to `.env`. This file will be used by the Docker containers.
 
-    ```bash
-    cp .env.example .env
-    ```
+   ```bash
+   cp .env.example .env
+   ```
 
-    For local development and running migrations on the host, create a `.env.local` file with database settings pointing to `localhost`:
+   For local development and running migrations on the host, create a `.env.local` file with database settings pointing
+   to `localhost`:
 
-    ```bash
-    cp .env.example .env.local
-    # Edit .env.local to change POSTGRES_HOST to localhost and POSTGRES_PORT to 5432
-    ```
-    Ensure `POSTGRES_HOST=localhost` and `POSTGRES_PORT=5432` in your `.env.local` if you plan to run Alembic migrations directly on your host machine against the Dockerized database.
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local to change POSTGRES_HOST to localhost and POSTGRES_PORT to 5432
+   ```
+   Ensure `POSTGRES_HOST=localhost` and `POSTGRES_PORT=5432` in your `.env.local` if you plan to run Alembic migrations
+   directly on your host machine against the Dockerized database.
 
-4.  **Install pre-commit hooks:**
+4. **Install pre-commit hooks:**
 
-    ```bash
-    pre-commit install
-    ```
+   ```bash
+   pre-commit install
+   ```
 
 ### Using the Makefile
 
@@ -103,6 +105,7 @@ To build and run the application using Docker Compose:
 make docker-build
 make docker-up
 ```
+
 The API will be available at `http://localhost:8000`.
 The PostgreSQL database will be accessible at `localhost:5432`.
 
@@ -121,7 +124,9 @@ To create a new migration:
 ```bash
 make makemigrations m="Your migration message"
 ```
-This command will create a new migration file in `app/db/migrations/versions/`. These files will be automatically picked up by Docker when the image is rebuilt or containers are restarted.
+
+This command will create a new migration file in `app/db/migrations/versions/`. These files will be automatically picked
+up by Docker when the image is rebuilt or containers are restarted.
 
 To apply the migrations:
 

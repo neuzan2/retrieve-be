@@ -43,16 +43,16 @@ run:
 
 test:
 	@echo "Running tests..."
-	pytest
+	uv run pytest
 
 lint:
 	@echo "Running linters..."
-	ruff check .
+	uv run ruff check .
 	mypy .
 
 format:
 	@echo "Formatting code..."
-	ruff format .
+	uv run ruff format .
 
 # ====================================================================================
 # DATABASE MIGRATIONS
@@ -60,11 +60,11 @@ format:
 
 makemigrations:
 	@echo "Creating new database migration..."
-	alembic revision --autogenerate -m "$(m)"
+	uv run alembic revision --autogenerate -m "$(m)"
 
 migrate:
 	@echo "Applying database migrations..."
-	alembic upgrade head
+	uv run alembic upgrade head
 
 # ====================================================================================
 # APP MANAGEMENT
