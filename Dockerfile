@@ -13,12 +13,10 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 ENV PYTHONPATH=/app
-# Install uv
-RUN pip install uv
 
 # Copy the requirements and install dependencies
 COPY pyproject.toml /app/
-RUN uv pip install --system --no-cache -r pyproject.toml
+RUN pip install --no-cache-dir -e .
 
 # Copy the rest of the application code
 COPY . /app
@@ -33,4 +31,4 @@ COPY . /app
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

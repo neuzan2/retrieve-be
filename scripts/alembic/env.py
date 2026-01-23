@@ -1,6 +1,5 @@
 import asyncio
 import importlib
-import pkgutil
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -9,12 +8,14 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.config.config import settings
-from src.db.base import Base
 
 # Add the project root to the Python path for module resolution
 project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
+
+
+from src.config.config import settings  # noqa: E402
+from src.db.base import Base  # noqa: E402
 
 # Alembic Config object, provides access to .ini file values
 config = context.config
@@ -39,7 +40,7 @@ def import_all_models():
 
     # Iterate through all subdirectories in src/app
     for app_path in app_dir.iterdir():
-        if not app_path.is_dir() or app_path.name.startswith('_'):
+        if not app_path.is_dir() or app_path.name.startswith("_"):
             continue
 
         app_name = app_path.name

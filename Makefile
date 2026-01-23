@@ -19,14 +19,18 @@ help:
 	@echo ""
 	@echo "Database Migrations:"
 	@echo "  make makemigrations  Create a new database migration"
-	@echo "  make migrate      Apply database migrations"
+	@echo "  make migrate         Apply database migrations"
+	@echo "  make downgrade       Downgrade database migrations"
 	@echo ""
 	@echo "Docker:"
-	@echo "  make docker-build  Build docker images"
-	@echo "  make docker-up     Run docker compose up"
-	@echo "  make docker-down   Run docker compose down"
-	@echo "  make docker-logs   Follow docker compose logs"
-	@echo "  make docker-shell  Get a shell into the api container"
+	@echo "  make docker-build          Build docker images"
+	@echo "  make docker-up             Run docker compose up"
+	@echo "  make docker-down           Run docker compose down"
+	@echo "  make docker-logs           Follow docker compose logs"
+	@echo "  make docker-shell          Get a shell into the api container"
+	@echo "  make docker-makemigrations Create a new database migration (in docker)"
+	@echo "  make docker-migrate        Apply database migrations (in docker)"
+	@echo "  make docker-downgrade      Downgrade database migrations (in docker)"
 	@echo ""
 
 # ====================================================================================
@@ -60,11 +64,27 @@ format:
 
 makemigrations:
 	@echo "Creating new database migration..."
-	uv run alembic revision --autogenerate -m "$(m)"
+	@if [ -n "$(m)" ]; then \
+		uv run alembic revision --autogenerate -m "$(m)"; \
+	else \
+		printf "Enter migration message: "; \
+		read msg; \
+		uv run alembic revision --autogenerate -m "$$msg"; \
+	fi
 
 migrate:
 	@echo "Applying database migrations..."
 	uv run alembic upgrade head
+
+downgrade:
+	@echo "Downgrading database..."
+	@if [ -n "$(r)" ]; then \
+		uv run alembic downgrade "$(r)"; \
+	else \
+		printf "Enter revision ID to downgrade to (or -1 for previous): "; \
+		read rev; \
+		uv run alembic downgrade "$$rev"; \
+	fi
 
 # ====================================================================================
 # APP MANAGEMENT
@@ -113,3 +133,27 @@ docker-logs:
 docker-shell:
 	@echo "Getting a shell into the api container..."
 	docker compose exec api /bin/sh
+
+docker-makemigrations:
+	@echo "Creating new database migration using docker..."
+	@if [ -n "$(m)" ]; then \
+		docker compose exec api alembic revision --autogenerate -m "$(m)"; \
+	else \
+		printf "Enter migration message: "; \
+		read msg; \
+		docker compose exec api alembic revision --autogenerate -m "$$msg"; \
+	fi
+
+docker-migrate:
+	@echo "Applying database migrations using docker..."
+	docker compose exec api alembic upgrade head
+
+docker-downgrade:
+	@echo "Downgrading database using docker..."
+	@if [ -n "$(r)" ]; then \
+		docker compose exec api alembic downgrade "$(r)"; \
+	else \
+		printf "Enter revision ID to downgrade to (or -1 for previous): "; \
+		read rev; \
+		docker compose exec api alembic downgrade "$$rev"; \
+	fi
