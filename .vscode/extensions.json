@@ -1,0 +1,25 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "charliermarsh.ruff",
+        "ms-python.debugpy",
+        "ms-vscode.docker",
+        "kevinrose.vsc-python-indent",
+        "eamodio.gitlens",
+        "GitHub.copilot",
+        "ms-vscode.makefile-tools",
+        "codeium.codeium",
+        "tamasfe.even-better-toml",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-toolsai.jupyter",
+        "aaron-bond.better-comments",
+        "github.vscode-github-actions",
+        "bierner.markdown-mermaid",
+        "postman.postman-for-vscode",
+        "alexcvzz.vscode-sqlite",
+        "ms-vscode-remote.remote-containers"
+    ]
+}

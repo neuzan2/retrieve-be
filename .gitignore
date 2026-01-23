@@ -227,3 +227,4 @@ fabric.properties
 *.vsix
 
 
+.github/copilot*
