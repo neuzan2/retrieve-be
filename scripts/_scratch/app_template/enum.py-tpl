@@ -1,0 +1,12 @@
+"""
+Enum containing constants for the app. Add any new constant within this file to maintain centralized management of app-wide constants.
+"""
+
+from enum import StrEnum  
+
+class {{app_name}}Enum(StrEnum):
+    """
+    Updates the specified property with a new value, triggering any necessary UI refresh or business logic.
+    Make changes to the property to ensure the app reflects the latest state and behaves as expected.
+    """
+    pass

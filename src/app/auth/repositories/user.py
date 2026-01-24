@@ -1,49 +1,170 @@
-# mypy: disable-error-code=assignment
-import uuid
-from typing import List, Optional
+"""
+User service for CRUD operations.
+"""
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from functools import cached_property
+from typing import Optional
 
-from src.app.auth.models import User
-from src.app.auth.schemas import UserCreate, UserUpdate
+from sqlalchemy.orm import Query, Session
+
+from src.app.auth.models.auth import User
+from src.app.auth.schemas.user import UserCreate, UserUpdate
+from src.app.auth.utils.security import get_password_hash
 
 
-class UserRepository:
-    def __init__(self, session: AsyncSession):
-        self.session = session
+class UserService:
+    """Service class for user-related operations."""
 
-    async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
-        result = await self.session.execute(select(User).offset(skip).limit(limit))
-        return list(result.scalars().all())
+    def __init__(self, db: Session):
+        """
+        Initialize UserService with database session.
 
-    async def get_user_by_id(self, user_id: uuid.UUID) -> Optional[User]:
-        result = await self.session.execute(select(User).where(User.id == user_id))
-        return result.scalars().first()
+        Args:
+            db: SQLAlchemy database session
+        """
+        self.db = db
 
-    async def get_user_by_email(self, email: str) -> Optional[User]:
-        result = await self.session.execute(select(User).where(User.email == email))
-        return result.scalars().first()
+    @cached_property
+    def query(self) -> Query:
+        """Get the current database session."""
+        return self.db.query(User)
 
-    async def create_user(self, user_in: UserCreate) -> User:
-        user = User(email=user_in.email, hashed_password=user_in.password)
-        self.session.add(user)
-        await self.session.commit()
-        await self.session.refresh(user)
+    def get_by_id(self, user_id: int) -> Optional[User]:
+        """
+        Get user by ID.
+
+        Args:
+            user_id: User ID to search for
+
+        Returns:
+            User object if found, None otherwise
+        """
+        return self.query.filter(User.id == user_id).first()
+
+    def get_by_email(self, email: str) -> Optional[User]:
+        """
+        Get user by email.
+
+        Args:
+            email: Email address to search for
+
+        Returns:
+            User object if found, None otherwise
+        """
+        return self.query.filter(User.email == email).first()
+
+    def get_by_username(self, username: str) -> Optional[User]:
+        """
+        Get user by username.
+
+        Args:
+            username: Username to search for
+
+        Returns:
+            User object if found, None otherwise
+        """
+        return self.query.filter(User.username == username).first()
+
+    def get_by_username_or_email(self, identifier: str) -> Optional[User]:
+        """
+        Get user by username or email.
+
+        Args:
+            identifier: Username or email to search for
+
+        Returns:
+            User object if found, None otherwise
+        """
+        return self.query.filter(
+            (User.username == identifier) | (User.email == identifier)
+        ).first()
+
+    def create(self, user_data: UserCreate) -> User:
+        """
+        Create a new user.
+
+        Args:
+            user_data: User creation data
+
+        Returns:
+            Created User object
+        """
+        hashed_password = get_password_hash(user_data.password)
+
+        db_user = User(
+            email=user_data.email,
+            username=user_data.username,
+            hashed_password=hashed_password,
+        )
+
+        self.db.add(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
+
+        return db_user
+
+    def update(self, user: User, user_data: UserUpdate) -> User:
+        """
+        Update an existing user.
+
+        Args:
+            user: User object to update
+            user_data: Update data
+
+        Returns:
+            Updated User object
+        """
+        update_data = user_data.model_dump(exclude_unset=True)
+
+        if "password" in update_data:
+            update_data["hashed_password"] = get_password_hash(
+                update_data.pop("password")
+            )
+
+        for field, value in update_data.items():
+            setattr(user, field, value)
+
+        self.db.commit()
+        self.db.refresh(user)
+
         return user
 
-    async def update_user(self, user: User, user_in: UserUpdate) -> User:
-        if user_in.email:
-            user.email = user_in.email
-        # if user_in.password: # Password hashing should be handled in service layer
-        #     user.hashed_password = user_in.password
-        self.session.add(user)
-        await self.session.commit()
-        await self.session.refresh(user)
+    def delete(self, user: User) -> None:
+        """
+        Delete a user.
+
+        Args:
+            user: User object to delete
+        """
+        self.db.delete(user)
+        self.db.commit()
+
+    def activate(self, user: User) -> User:
+        """
+        Activate a user account.
+
+        Args:
+            user: User object to activate
+
+        Returns:
+            Updated User object
+        """
+        user.is_active = True
+        self.db.commit()
+        self.db.refresh(user)
         return user
 
-    async def delete_user(self, user_id: uuid.UUID) -> None:
-        user = await self.get_user_by_id(user_id)
-        if user:
-            await self.session.delete(user)
-            await self.session.commit()
+    def deactivate(self, user: User) -> User:
+        """
+        Deactivate a user account.
+
+        Args:
+            user: User object to deactivate
+
+        Returns:
+            Updated User object
+        """
+        user.is_active = False
+        self.db.commit()
+        self.db.refresh(user)
+        return user

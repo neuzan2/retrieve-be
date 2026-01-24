@@ -1,36 +1,32 @@
 [project]
-name = "chart-retrieve"
+name = "EvaireRetrieve"
 version = "0.1.0"
 description = "Production-ready FastAPI backend project"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi",
-    "pydantic",
-    "pydantic-settings",
-    "pydantic[email]",
-    "SQLAlchemy[asyncio]",
-    "psycopg2-binary",
-    "alembic",
-    "redis",
-    "celery",
-    "uvicorn[standard]",
-    "python-jose[cryptography]",
-    "passlib[argon2]",
-    "argon2_cffi",
-    "tenacity",
-    "structlog",
-    "python-json-logger",
-    "asyncpg",
+    "celery>=5.6.2",
+    "fastapi[standard]>=0.128.0",
+    "passlib[argon2]>=1.7.4",
+    "psycopg2-binary>=2.9.11",
+    "pyjwt[crypto]>=2.10.1",
+    "pypika>=0.50.0",
+    "redis>=7.1.0",
+    "sqlalchemy[asyncio]>=2.0.46",
 ]
 
 [dependency-groups]
-dev = ["ruff",
+dev = [
+    "ruff",
     "mypy",
     "pytest",
     "httpx",
     "pre-commit",
     "ipdb",
+]
+prod = [
+    "boto3>=1.42.34",
+    "watchtower>=3.4.0",
 ]
 
 [tool.ruff]

@@ -1,3 +1,7 @@
-from .user import User
+"""
+Database models for the authentication package.
+"""
 
-__all__ = ["User"]
+from src.app.auth.models.auth import TokenBlacklist, User
+
+__all__ = ["User", "TokenBlacklist"]

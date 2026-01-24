@@ -3,19 +3,33 @@
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
-2. [Architecture & Design Patterns](#architecture--design-patterns)
-3. [Folder Structure](#folder-structure)
-4. [Detailed Component Descriptions](#detailed-component-descriptions)
-5. [Development Workflow](#development-workflow)
-6. [Technology Stack](#technology-stack)
-7. [Coding Standards & Guidelines](#coding-standards--guidelines)
-8. [Best Practices](#best-practices)
+2. [Used Packages](#used-packages)
+3. [Architecture & Design Patterns](#architecture--design-patterns)
+4. [Folder Structure](#folder-structure)
+5. [Detailed Component Descriptions](#detailed-component-descriptions)
+6. [Development Workflow](#development-workflow)
+7. [Technology Stack](#technology-stack)
+8. [Coding Standards & Guidelines](#coding-standards--guidelines)
+9. [Best Practices](#best-practices)
 
 ---
 
 ## Project Overview
 
 **Retrieve** is a production-ready FastAPI backend project designed following industry best practices. It implements a modular, scalable architecture with async support, comprehensive database management, and a clear separation of concerns.
+
+## Used Packages
+[x] Python ≥  3.12
+[x] FastAPI ≥ 0.114.0
+[x] Pydantic ≥ 2.x
+[ ] Postgresql ≥ 17
+[x] SQLalchemy ≥ 2.x
+[ ] Xlsxwriter >= 3.x
+[ ] Pandas  >= 2.x
+[x] Pypika >= 0.48
+[ ] Redis >=7.1.0
+[ ] Celery>=5.6.2
+[ ] Redshift_connector >= 2.x
 
 ### Key Characteristics
 
@@ -319,7 +333,7 @@ docs/
 
 ```python
 from fastapi import FastAPI
-from src.config.config import settings
+from src.config import settings
 from src.config.logging import setup_logging
 from src.config.urls import include_router
 from src.core.exceptions.handlers import add_exception_handlers
@@ -864,7 +878,7 @@ async def transfer_funds(self, from_user: uuid.UUID, to_user: uuid.UUID, amount:
 
 ```python
 # ✓ Correct - Use environment variables
-from src.config.config import settings
+from src.config import settings
 
 db_url = settings.database_url
 secret_key = settings.SECRET_KEY

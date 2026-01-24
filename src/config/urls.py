@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 from fastapi import APIRouter, FastAPI
 
-from src.config.config import settings
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,13 @@ def load_router_from_file(api_router: APIRouter, file_path: str):
 
 
 # Iterate through each app directory
-def load_all_routers(router: APIRouter, api_version: str, app_dir_path: Optional[Path] = None, *args, **kwargs) -> Any:
+def load_all_routers(
+    router: APIRouter,
+    api_version: str,
+    app_dir_path: Optional[Path] = None,
+    *args,
+    **kwargs,
+) -> Any:
     app_dir_path = app_dir_path or settings.APP_DIR
 
     for _path in app_dir_path.iterdir():
@@ -60,16 +66,24 @@ def load_all_routers(router: APIRouter, api_version: str, app_dir_path: Optional
             relative_path_part = str(_path).split(settings.APP_DIR.name)[-1].strip("/")
             # We might need to construct the module path correctly. Assuming 'src' is the root package.
             # This part depends heavily on your directory structure, blindly fixing based on previous logic:
-            load_router_from_file(router, f"src.{settings.APP_DIR.name}.{relative_path_part}")
+            load_router_from_file(
+                router, f"src.{settings.APP_DIR.name}.{relative_path_part}"
+            )
             continue
 
         if _path.is_dir():
             # Recursively check specifically for the api version folder structure if that's the intent
             # Or just recurse into directories looking for files.
             # The original logic appended /api/{version} which assumes a strict structure.
-            api_path = _path if {"api", api_version}.issubset(set(_path.parts)) else _path / f"api/{api_version}"
+            api_path = (
+                _path
+                if {"api", api_version}.issubset(set(_path.parts))
+                else _path / f"api/{api_version}"
+            )
             if api_path.exists():
-                load_all_routers(router=router, api_version=api_version, app_dir_path=api_path)
+                load_all_routers(
+                    router=router, api_version=api_version, app_dir_path=api_path
+                )
             else:
                 # If standard recursion is needed without forcing api/version check here:
                 # load_all_routers(router=router, api_version=api_version, path=_path)

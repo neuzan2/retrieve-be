@@ -1,8 +1,10 @@
-from functools import cached_property
+from functools import cached_property, lru_cache
 from pathlib import Path
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 from pydantic_settings import BaseSettings
+
+__all__ = ["settings"]
 
 
 class Settings(BaseSettings):
@@ -10,7 +12,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "FastAPI Backend"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
-    ENVIRONMENT: str = "production"
+    ENVIRONMENT: str = "development"
 
     # Database settings
     POSTGRES_USER: str
@@ -28,15 +30,14 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     API_CONFIGS: List[Dict[str, Union[str, bool]]] = [
-        {
-            "version": "v1",
-            "is_active": True
-        },
-        {
-            "version": "v2",
-            "is_active": True
-        }
+        {"version": "v1", "is_active": True},
+        {"version": "v2", "is_active": True},
     ]
+
+    # AWS settings
+    AWS_REGION: str = "us-east-1"
+    CLOUDWATCH_LOG_GROUP: str = ""
+    CLOUDWATCH_LOG_STREAM: str = ""
 
     class Config:
         case_sensitive = True
@@ -50,7 +51,7 @@ class Settings(BaseSettings):
 
     @cached_property
     def BASE_DIR(self) -> Path:
-        return Path(__file__).parent.parent.parent
+        return Path(__file__).resolve().parents[2]
 
     @cached_property
     def SRC_DIR(self) -> Path:
@@ -61,4 +62,10 @@ class Settings(BaseSettings):
         return self.BASE_DIR / "src/app"
 
 
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    """Get cached settings instance."""
+    return Settings()
+
+
+settings = get_settings()

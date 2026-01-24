@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.config.config import settings
+from src.config import settings
 from src.config.logging import setup_logging
 from src.config.urls import include_router
 from src.core.exceptions.handlers import add_exception_handlers
@@ -15,7 +15,11 @@ def create_app() -> FastAPI:
     setup_logging()
 
     # Create FastAPI app
-    app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION, debug=settings.DEBUG, )
+    app = FastAPI(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        debug=settings.DEBUG,
+    )
 
     # Add middleware
     app.add_middleware(RequestIdMiddleware)
@@ -30,3 +34,15 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+@app.get("/health", tags=["health"])
+async def health():
+    """
+    This endpoint is used to verify the health status of the application.
+    It returns a simple JSON response indicating that the service is operational.
+
+    Returns:
+        dict: A dictionary containing the status of the service, e.g., {"status": "ok"}.
+    """
+    return {"status": "ok"}

@@ -1,3 +1,25 @@
-from .user import User, UserCreate, UserUpdate
+"""
+Pydantic schemas for request/response validation.
+"""
 
-__all__ = ["User", "UserCreate", "UserUpdate"]
+from src.app.auth.schemas.token import (
+    Token,
+    TokenData,
+    TokenRefresh,
+)
+from src.app.auth.schemas.user import (
+    UserCreate,
+    UserInDB,
+    UserResponse,
+    UserUpdate,
+)
+
+__all__ = [
+    "UserCreate",
+    "UserResponse",
+    "UserUpdate",
+    "UserInDB",
+    "Token",
+    "TokenData",
+    "TokenRefresh",
+]
