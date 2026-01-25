@@ -4,41 +4,36 @@ This is a production-ready FastAPI backend project, initialized with best practi
 
 ## Tech Stack
 
-- Python >= 3.12
-- FastAPI >= 0.114
-- Pydantic v2
-- Async SQLAlchemy 2.x
-- PostgreSQL
-- Alembic (migrations)
-- Redis (caching + background tasks)
-- Celery (async workers)
-- UV (dependency + lockfile management)
-- Ruff (format + lint)
-- MyPy (type checking)
-- Pytest (testing)
-- Docker + Docker Compose
+**Languages & Frameworks**
+- [x] Python ≥ 3.12
+- [x] FastAPI ≥ 0.114.0
+- [x] Pydantic ≥ 2.x
+
+**Database & ORM**
+- [x] PostgreSQL ≥ 17
+- [x] SQLAlchemy ≥ 2.x
+- [x] Pypika ≥ 0.48
+
+**Async & Task Queue**
+- [x] Redis ≥ 7.1.0
+- [x] Celery ≥ 5.6.2
+
+**Data Processing (optional)**
+- [ ] XlsxWriter ≥ 3.x
+- [ ] Pandas ≥ 2.x
+- [ ] Redshift Connector ≥ 2.x
+
+**Dev Tools**
+- [x] UV (dependency + lockfile management)
+- [x] Ruff (format + lint)
+- [x] MyPy (type checking)
+- [x] Pytest (testing)
+- [x] Docker & Docker Compose
+
 
 ## Project Structure
 
-```
-app/
-├── api/
-│   └── v1/
-│       ├── health/
-│       └── users/
-├── core/
-│   ├── middleware/
-│   ├── security/
-│   └── exceptions/
-├── db/
-│   └── migrations/
-├── models/
-├── schemas/
-├── services/
-├── repositories/
-└── tests/
-main.py
-```
+Visit [Project Structure](/docs/project/STRUCTURE.md) doc file.
 
 ## Getting Started
 
