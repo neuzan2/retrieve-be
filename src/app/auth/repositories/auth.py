@@ -9,7 +9,7 @@ from typing import Optional, Tuple
 from sqlalchemy.orm import Query, Session
 
 from src.app.auth.models.auth import TokenBlacklist, User
-from src.app.auth.repositories.user import UserService
+from src.app.auth.repositories.user import UserRepository
 from src.app.auth.schemas.token import Token
 from src.app.auth.schemas.user import UserCreate
 from src.app.auth.utils.security import (
@@ -20,18 +20,18 @@ from src.app.auth.utils.security import (
 )
 
 
-class AuthService:
-    """Service class for authentication operations."""
+class AuthRepository:
+    """Repository class for authentication operations."""
 
     def __init__(self, db: Session):
         """
-        Initialize AuthService with database session.
+        Initialize AuthRepository with database session.
 
         Args:
             db: SQLAlchemy database session
         """
         self.db = db
-        self.user_service = UserService(db)
+        self.user_repository = UserRepository(db)
 
     @cached_property
     def query(self) -> Query:
@@ -49,7 +49,7 @@ class AuthService:
         Returns:
             User object if authentication successful, None otherwise
         """
-        user = self.user_service.get_by_username_or_email(username)
+        user = self.user_repository.get_by_username_or_email(username)
 
         if not user:
             return None
@@ -109,7 +109,7 @@ class AuthService:
             return None
 
         # Get user
-        user = self.user_service.get_by_username(username)
+        user = self.user_repository.get_by_username(username)
 
         if not user or not user.is_active:
             return None
@@ -130,15 +130,15 @@ class AuthService:
             Tuple of (User, None) if successful, (None, error_message) if failed
         """
         # Check if email already exists
-        if self.user_service.get_by_email(user_data.email):
+        if self.user_repository.get_by_email(user_data.email):
             return None, "Email already registered"
 
         # Check if username already exists
-        if self.user_service.get_by_username(user_data.username):
+        if self.user_repository.get_by_username(user_data.username):
             return None, "Username already taken"
 
         # Create user
-        user = self.user_service.create(user_data)
+        user = self.user_repository.create(user_data)
 
         return user, None
 

@@ -42,7 +42,20 @@ class UserUpdate(BaseModel):
 
 
 class UserResponse(UserBase):
-    """Schema for user response (public data)."""
+    """
+    Schema for user response containing public user data.
+    This schema extends UserBase and includes additional fields that are returned
+    when retrieving user information from the database.
+    Attributes:
+        id (int): Unique identifier for the user.
+        is_active (bool): Flag indicating whether the user account is active.
+        created_at (datetime): Timestamp when the user account was created.
+    Config:
+        from_attributes (bool): Enables Pydantic to populate the model from ORM objects
+            by reading attributes directly. This allows the schema to work seamlessly
+            with SQLAlchemy models or any object with attributes matching the field names,
+            instead of requiring dictionary inputs.
+    """
 
     id: int
     is_active: bool

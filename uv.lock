@@ -447,6 +447,7 @@ dependencies = [
 dev = [
     { name = "httpx" },
     { name = "ipdb" },
+    { name = "ipython" },
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -474,6 +475,7 @@ requires-dist = [
 dev = [
     { name = "httpx" },
     { name = "ipdb" },
+    { name = "ipython", specifier = ">=9.9.0" },
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },

@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.app.auth.models.auth import User
-from src.app.auth.repositories.auth import AuthService
+from src.app.auth.repositories.auth import AuthRepository
 from src.app.auth.schemas.token import Token, TokenRefresh
 from src.app.auth.schemas.user import UserCreate, UserResponse
 from src.app.auth.utils.dependencies import (
@@ -29,14 +29,14 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 )
 async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     """
-    Register a new user.
+    Register a new user.!
 
     - **email**: Valid email address
     - **username**: Unique username (3-100 characters)
     - **password**: Password (8-100 characters, must contain uppercase, lowercase, and digit)
     """
-    auth_service = AuthService(db)
-    user, error = auth_service.register_user(user_data)
+    auth_repository = AuthRepository(db)
+    user, error = auth_repository.register_user(user_data)
 
     if error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
@@ -58,8 +58,8 @@ async def login(
 
     Returns access and refresh tokens.
     """
-    auth_service = AuthService(db)
-    user = auth_service.authenticate_user(form_data.username, form_data.password)
+    auth_repository = AuthRepository(db)
+    user = auth_repository.authenticate_user(form_data.username, form_data.password)
 
     if not user:
         raise HTTPException(
@@ -73,7 +73,7 @@ async def login(
             status_code=status.HTTP_403_FORBIDDEN, detail="User account is inactive"
         )
 
-    return auth_service.create_tokens(user)
+    return auth_repository.create_tokens(user)
 
 
 @router.post(
@@ -86,8 +86,8 @@ async def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db))
     """
     Refresh tokens using a valid refresh token.
     """
-    auth_service = AuthService(db)
-    tokens = auth_service.refresh_access_token(token_data.refresh_token)
+    auth_repository = AuthRepository(db)
+    tokens = auth_repository.refresh_access_token(token_data.refresh_token)
 
     if not tokens:
         raise HTTPException(
@@ -109,8 +109,8 @@ async def logout(token: str = Depends(oauth2_scheme), db: Session = Depends(get_
     """
     Logout by blacklisting the current token.
     """
-    auth_service = AuthService(db)
-    success = auth_service.blacklist_token(token)
+    auth_repository = AuthRepository(db)
+    success = auth_repository.blacklist_token(token)
 
     if not success:
         raise HTTPException(

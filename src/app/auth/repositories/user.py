@@ -5,19 +5,21 @@ User service for CRUD operations.
 from functools import cached_property
 from typing import Optional
 
-from sqlalchemy.orm import Query, Session
+from sqlalchemy import Select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Query
 
 from src.app.auth.models.auth import User
 from src.app.auth.schemas.user import UserCreate, UserUpdate
 from src.app.auth.utils.security import get_password_hash
 
 
-class UserService:
-    """Service class for user-related operations."""
+class UserRepository:
+    """Repository class for user-related operations."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         """
-        Initialize UserService with database session.
+        Initialize UserRepository with database session.
 
         Args:
             db: SQLAlchemy database session
@@ -27,9 +29,22 @@ class UserService:
     @cached_property
     def query(self) -> Query:
         """Get the current database session."""
-        return self.db.query(User)
+        return Select(User)
 
-    def get_by_id(self, user_id: int) -> Optional[User]:
+    async def get_object(self, filter_by: dict) -> Optional[User]:
+        """
+        Get a user object based on filter criteria.
+
+        Args:
+            filter_by: Dictionary of filter criteria
+
+        Returns:
+            User object if found, None otherwise
+        """
+        result = self.db.execute(self.query.where(**filter_by))
+        return result.scalars().first()
+
+    async def get_by_id(self, user_id: int) -> Optional[User]:
         """
         Get user by ID.
 
@@ -39,9 +54,9 @@ class UserService:
         Returns:
             User object if found, None otherwise
         """
-        return self.query.filter(User.id == user_id).first()
+        return await self.get_object(User.id == user_id)
 
-    def get_by_email(self, email: str) -> Optional[User]:
+    async def get_by_email(self, email: str) -> Optional[User]:
         """
         Get user by email.
 
@@ -51,9 +66,9 @@ class UserService:
         Returns:
             User object if found, None otherwise
         """
-        return self.query.filter(User.email == email).first()
+        return await self.get_object(User.email == email)
 
-    def get_by_username(self, username: str) -> Optional[User]:
+    async def get_by_username(self, username: str) -> Optional[User]:
         """
         Get user by username.
 
@@ -65,7 +80,7 @@ class UserService:
         """
         return self.query.filter(User.username == username).first()
 
-    def get_by_username_or_email(self, identifier: str) -> Optional[User]:
+    async def get_by_username_or_email(self, identifier: str) -> Optional[User]:
         """
         Get user by username or email.
 
@@ -75,11 +90,12 @@ class UserService:
         Returns:
             User object if found, None otherwise
         """
-        return self.query.filter(
-            (User.username == identifier) | (User.email == identifier)
-        ).first()
+        result = await self.db.execute(
+            self.query.where((User.username == identifier) | (User.email == identifier))
+        )
+        return result.scalars().first()
 
-    def create(self, user_data: UserCreate) -> User:
+    async def create(self, user_data: UserCreate) -> User:
         """
         Create a new user.
 
@@ -103,7 +119,7 @@ class UserService:
 
         return db_user
 
-    def update(self, user: User, user_data: UserUpdate) -> User:
+    async def update(self, user: User, user_data: UserUpdate) -> User:
         """
         Update an existing user.
 
@@ -129,7 +145,7 @@ class UserService:
 
         return user
 
-    def delete(self, user: User) -> None:
+    async def delete(self, user: User) -> None:
         """
         Delete a user.
 
@@ -139,7 +155,7 @@ class UserService:
         self.db.delete(user)
         self.db.commit()
 
-    def activate(self, user: User) -> User:
+    async def activate(self, user: User) -> User:
         """
         Activate a user account.
 
@@ -154,7 +170,7 @@ class UserService:
         self.db.refresh(user)
         return user
 
-    def deactivate(self, user: User) -> User:
+    async def deactivate(self, user: User) -> User:
         """
         Deactivate a user account.
 

@@ -1,4 +1,5 @@
 import logging
+from uuid import uuid4 as uuid
 
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError
@@ -12,9 +13,34 @@ logger = logging.getLogger(__name__)
 async def request_validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
+    def transform_validation_errors(errors: list) -> list:
+        details = []
+
+        for err in errors:
+            # Extract field name (last element of loc)
+            field = err.get("loc", [])[-1]
+
+            # Prefer ctx.error message if available
+            ctx = err.get("ctx", {})
+            issue = str(ctx.get("error")) if ctx.get("error") else err.get("msg")
+
+            details.append({"field": field, "issue": issue})
+
+        return details
+
+    trace_id = getattr(request.state, "trace_id", str(uuid()))
+    details = transform_validation_errors(exc.errors())
+
     return JSONResponse(
         status_code=422,
-        content={"detail": exc.errors(), "body": exc.body},
+        content={
+            "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "Input validation failed",
+                "details": details,
+                "trace_id": trace_id,
+            }
+        },
     )
 
 

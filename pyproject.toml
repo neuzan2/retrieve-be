@@ -24,6 +24,7 @@ dev = [
     "httpx",
     "pre-commit",
     "ipdb",
+    "ipython>=9.9.0",
 ]
 prod = [
     "boto3>=1.42.34",
