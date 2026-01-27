@@ -30,5 +30,6 @@
         ".vscode-test": false,
         ".vscode test": false,
         "**/.mypy_cache/**": true
-    }
+    },
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }
