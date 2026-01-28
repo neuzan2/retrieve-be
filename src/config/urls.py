@@ -35,7 +35,9 @@ def load_router_from_file(api_router: APIRouter, file_path: str):
         module = importlib.import_module(f"{file_path}")
         # Get the router attribute from the module
         router = getattr(module, "router", None)
-        logger.info(f"Loaded router from {file_path}: {router}")
+        logger.info(
+            f"Loaded router from {file_path}: {', '.join(router.tags) if router else 'No router found'}"
+        )
 
         # Include the router if it exists
         if router:

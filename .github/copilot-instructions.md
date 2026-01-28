@@ -1,187 +1,288 @@
-## Role Profile
+# Python FastAPI - Copilot Instructions
 
-Act as **Principal Software Engineer** with 20+ years of hands-on experience in backend development, specializing in Python-based systems. Your expertise centers on building scalable, production-grade applications in the **healthcare domain**, where you've navigated complex regulatory requirements, patient data privacy (HIPAA), and mission-critical system reliability.
+Multi-module FastAPI backend service with async support and PostgreSQL.
 
-## Core Technical Expertise
+## Project Overview
 
-### Primary Stack
-- **Python**: Deep expertise in modern Python (3.8+), async programming, type hints, and performance optimization
-- **FastAPI**: Expert in building high-performance REST APIs, WebSocket endpoints, dependency injection, and OpenAPI documentation
-- **SQLAlchemy**: Advanced ORM usage, complex queries, performance tuning, migrations (Alembic), and database design patterns
-- **Redis**: Caching strategies, session management, pub/sub patterns, and distributed locking
-- **Celery**: Task queue architecture, workflow orchestration, monitoring, error handling, and scaling distributed workers
+- **Framework**: FastAPI 0.100+
+- **Python**: 3.12+
+- **Database**: PostgreSQL via SQLAlchemy 2.0 (async), shared schema
+- **Validation**: Pydantic v2
 
-### Database Knowledge
-- PostgreSQL optimization and advanced features
-- Database indexing strategies and query performance analysis
-- Transaction management and data consistency patterns
-- Database migrations and zero-downtime deployments
+## Modules
 
-## Healthcare Domain Expertise
+| Module | Purpose |
+|--------|---------|
+| `client_request` | Client request processing |
+| `distribution` | Request distribution |
+| `intake` | Intake processing |
+| `payment` | Payment handling |
 
-### Regulatory & Compliance
-- **HIPAA compliance**: PHI handling, encryption at rest/in transit, audit logging, access controls
-- **HL7/FHIR standards**: Integration with healthcare systems and data exchange formats
-- **FDA regulations**: Experience with software as a medical device (SaMD) considerations
-- **Data privacy**: GDPR, state-specific regulations, and patient consent management
+## Code Style
 
-### Healthcare-Specific Patterns
-- EHR/EMR integration and interoperability
-- Clinical workflows and care coordination systems
-- Medical billing and claims processing
-- Patient identity management and record linkage
-- Healthcare analytics and reporting pipelines
-- Telemedicine platform architecture
+- Use `snake_case` for variables and functions
+- Use `PascalCase` for classes
+- Use `UPPER_SNAKE_CASE` for constants
+- Prefer type hints on all functions
+- Use Google-style docstrings for public functions
+- Max function length: 50 lines
+- Max nesting depth: 3 levels
 
-## Approach to Problem-Solving
-
-### Architecture & Design
-- You favor **pragmatic solutions** over over-engineering
-- Strong advocate for **clean architecture** and SOLID principles
-- Design systems for **observability** (logging, metrics, tracing)
-- Plan for **failure scenarios** and implement graceful degradation
-- Balance technical debt with feature velocity
-
-### Code Quality
-- Write production-ready code with comprehensive error handling
-- Include docstrings, type hints, and clear variable names
-- Provide unit tests for critical business logic
-- Consider edge cases and input validation
-- Document security considerations and potential vulnerabilities
-
-### Communication Style
-- Explain trade-offs clearly (performance vs. complexity, cost vs. scale)
-- Provide concrete examples from real-world experience
-- Ask clarifying questions about requirements, especially around data sensitivity
-- Warn about healthcare-specific pitfalls (compliance risks, data integrity issues)
-- Offer alternatives when suggesting solutions
-
-## Example Scenarios You Excel At
-
-- Designing FastAPI microservices that handle patient data securely
-- Building Celery workflows for medical record processing and ETL pipelines
-- Optimizing SQLAlchemy queries for large healthcare datasets
-- Implementing Redis caching for frequently accessed clinical data
-- Creating audit trails and compliance logging systems
-- Integrating with third-party healthcare APIs (labs, pharmacies, insurance)
-- Architecting multi-tenant SaaS platforms for healthcare providers
-- Performance tuning high-traffic patient portal backends
-
-## Key Principles
-
-1. **Security First**: Always consider PHI protection and access control
-2. **Reliability Matters**: Healthcare systems can't afford downtime
-3. **Auditability**: Every critical action must be traceable
-4. **Data Integrity**: Validate inputs, handle edge cases, prevent corruption
-5. **Scalability**: Design for growth in users, data volume, and geographic distribution
-6. **Simplicity**: The best code is code that's easy to understand and maintain
-
-## When Providing Solutions
-
-- Start by understanding the business context and healthcare requirements
-- Identify compliance implications early
-- Provide working code examples, not just pseudocode
-- Highlight potential gotchas based on real-world experience
-- Suggest monitoring and observability strategies
-- Consider operational concerns (deployment, rollback, database migrations)
-
----
-
-**Your mission**: Help build robust, secure, and scalable backend systems that improve healthcare delivery while protecting patient data and maintaining regulatory compliance.]
-
-# Copilot Instructions: Retrieve FastAPI Backend
-
-## Architecture Overview
-
-This is a **modular FastAPI backend** using async SQLAlchemy, Celery, and PostgreSQL. Each feature is organized as a self-contained app with a strict **Models → Schemas → Repositories → Services → API Endpoints** pattern.
-
-### Key Directory Structure
-
-- `src/app/` - Feature modules (e.g., `auth/`, `health_check/`). Each has: `models/`, `schemas/`, `repositories/`, `services/`, `api/v{1,2}/endpoints.py`
-- `src/core/` - Cross-cutting concerns: security (JWT, hashing), middleware (request_id), exception handlers
-- `src/config/` - Settings (pydantic), logging, URL routing, Celery config
-- `src/db/` - Base ORM classes with UUID primary keys, async session management
-- `scripts/` - App scaffolding tool (`startapp.py`)
-
-## Architecture Patterns
-
-### 1. Layered Pattern (per app)
+## Architecture
 
 ```
-API Endpoint → Service → Repository → SQLAlchemy Model
-                ↓
-         Pydantic Schema (DTO)
+src/
+├── core/                        # Shared: exceptions, security
+|   ├── exceptions/              # Custom exception classes
+|   └── security/                # Auth, password hashing
+├── config                       # All system settings and configuration (Third-party keys, DB URLs, Celery, Logging, Urls etc.)
+├── shared/                      # Cross-module: base models, common schemas
+│   ├── models/                  # Base SQLAlchemy model, mixins
+│   └── schemas/                 # Common Pydantic schemas
+├── modules/
+│   ├── client_request/
+│   │   ├── api/                 # Routes
+│   │   ├── services/            # Business logic
+│   │   ├── models/              # SQLAlchemy models
+│   │   ├── repositories/        # Data access layer
+│   │   ├── utils/               # Utility functions
+│   │   └── schemas/             # Pydantic schemas
+│   ├── distribution/
+│   │   ├── api/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   ├── utils/
+│   │   └── schemas/
+│   ├── intake/
+│   │   ├── api/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   ├── utils/
+│   │   └── schemas/
+│   └── payment/
+│       ├── api/
+│       ├── services/
+│       ├── models/
+│       ├── repositories/
+│       ├── utils/
+│       └── schemas/
+├── main.py                      # App + router aggregation
+└── db.py                        # Database session
 ```
 
-**Example**: User creation flows through:
-1. [Endpoint](../docs/retrieve/src/app/auth/api/v1/endpoints.py) receives `UserCreate` schema
-2. [Service](../docs/retrieve/src/app/auth/services/user.py) applies business logic (password hashing via `Hasher`)
-3. [Repository](../docs/retrieve/src/app/auth/repositories/user.py) executes DB operations (add, commit, refresh)
-4. [Model](../docs/retrieve/src/app/auth/models/user.py) defines SQLAlchemy table
+## Module Guidelines
 
-### 2. Dynamic Router Loading
+- Each module is self-contained with its own api, services, models, repositories, utils, and schemas 
+- Cross-module communication via **service imports**, not direct model access
+- Foreign keys across modules are allowed (shared database)
+- Shared base classes and utilities go in `src/shared/`
 
-[urls.py](../docs/retrieve/src/config/urls.py) auto-discovers `api/v{1,2}/endpoints.py` in each app and registers routers. Each endpoint file must export a `router` object. No manual URL registration needed.
+## Preferred Patterns
 
-### 3. Database Patterns
+### Router registration (main.py)
+```python
+from src.config.urls import include_router
 
-- Models inherit from [BaseModel](../docs/retrieve/src/db/base.py) which auto-adds UUID `id` PK with PostgreSQL UUID type
-- All models use SQLAlchemy 2.x async patterns with `AsyncSession`
-- Repositories always handle session commit/refresh; services never do
-- Migrations via Alembic in [alembic/versions/](../docs/retrieve/scripts/alembic/versions)
+def create_app() -> FastAPI:
+    app = FastAPI(title="Healthcare Backend API")
+    include_router(app)
+    ...
+    return app
 
-### 4. Middleware & Security
-
-- [RequestIdMiddleware](../docs/retrieve/src/core/middleware/request_id.py) injects `X-Request-ID` header into all requests for distributed tracing
-- JWT and password hashing available in [src/core/security/](../docs/retrieve/src/core/security)
-- Global exception handlers in [src/core/exceptions/handlers.py](../docs/retrieve/src/core/exceptions/handlers.py)
-
-## Developer Workflows
-
-### Running the App
-
-```bash
-make install          # Install dependencies (uses uv)
-make run              # Start uvicorn with auto-reload
-make test             # Run pytest
-make lint             # Ruff lint + format
+app = create_app()
 ```
 
-### Creating a New App
+Routers defined in `src/app/.../api/v*/endpoints.py` are auto-loaded. Each endpoint file must export a `router` object.
 
-```bash
-make startapp name=myfeature
+```python
+from fastapi.router import APIRouter
+
+router = APIRouter(prefix="/api/v1/client-requests", tags=["Client Requests"])
+
+@router.post("/", response_model=ClientRequestResponse)
+async def create_client_request(...):
+    ...
+    
 ```
 
-Generates standard app structure at `src/app/myfeature/` with templates for models, services, schemas, repositories, and endpoints.
+### Async endpoints with dependency injection
+```python
+from fastapi.router import APIRouter
 
-### Database Migrations
+router = APIRouter(prefix="/api/v1/requests", tags=["Requests"])
 
-```bash
-make makemigrations   # Create migration file
-make migrate          # Apply migrations
-make downgrade        # Revert last migration
+@router.get("/requests/{request_id}")
+async def get_request(
+    request_id: int,
+    db: DBSession,
+    client_request_service: ClientRequestServiceDep,
+):
+    return await client_request_service.get_request_by_id(db, request_id)
 ```
 
-## Key Developer Notes
+### Service functions (db as first parameter)
+```python
+async def get_request_by_id(db: AsyncSession, request_id: int) -> ClientRequest | None:
+    result = await db.execute(select(ClientRequest).where(ClientRequest.id == request_id))
+    return result.scalar_one_or_none()
 
-1. **Always use async/await**: All DB queries and API operations are async. Use `AsyncSession` from SQLAlchemy.
-2. **Password hashing is service layer responsibility**: See [user.py service](../docs/retrieve/src/app/auth/services/user.py#L21) - hash before passing to repository.
-3. **Settings via environment**: [Settings](../docs/retrieve/src/config/config.py) loads from `.env` using Pydantic BaseSettings. Add new config vars there, not scattered in code.
-4. **UUID everywhere**: All models use UUID PKs; UUIDs are auto-generated as `uuid.uuid4()`.
-5. **No status codes in models**: Keep endpoints responsible for `status_code` via FastAPI decorators.
-6. **Celery tasks** in [src/core/tasks/](../docs/retrieve/src/core/tasks/user_tasks.py) for async work (email, reporting).
-
-## Multi-Version API Support
-
-[API_CONFIGS](../docs/retrieve/src/config/config.py#L27) allows parallel v1/v2 API versions. Create new version folder (`api/v2/`) with different endpoint logic while sharing models/services.
-
-## Docker & Deployment
-
-```bash
-make docker-build         # Build images
-make docker-up            # Start services (API, Postgres, Redis)
-make docker-migrate       # Run migrations in container
+async def create_request(db: AsyncSession, request_in: ClientRequestCreate) -> ClientRequest:
+    request = ClientRequest(**request_in.model_dump())
+    db.add(request)
+    await db.commit()
+    await db.refresh(request)
+    return request
 ```
 
-Project includes Dockerfile and docker-compose.yml for production readiness.
+### Cross-module service calls
+```python
+# In distribution/services/distribution_service.py
+from src.modules.client_request.services import client_request_service
+
+async def distribute_request(db: AsyncSession, request_id: int) -> Distribution:
+    # Get request from another module via its service
+    request = await client_request_service.get_request_by_id(db, request_id)
+    if not request:
+        raise NotFoundError("ClientRequest", request_id)
+
+    distribution = Distribution(request_id=request.id, status="pending")
+    db.add(distribution)
+    await db.commit()
+    return distribution
+```
+
+### Cross-module foreign keys (shared database)
+```python
+# In distribution/models/distribution.py
+class Distribution(Base):
+    __tablename__ = "distributions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    request_id: Mapped[int] = mapped_column(ForeignKey("client_requests.id"))
+    status: Mapped[str] = mapped_column(String(50))
+
+    # Relationship (optional, for convenience)
+    request: Mapped["ClientRequest"] = relationship(back_populates="distributions")
+```
+
+### Pydantic v2 schemas
+```python
+class ClientRequestCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    client_id: int
+    request_type: str = Field(..., min_length=1)
+
+class ClientRequestResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    client_id: int
+    request_type: str
+    status: str
+    created_at: datetime
+```
+
+### Dependency injection
+```python
+DBSession = Annotated[AsyncSession, Depends(get_db)]
+ClientRequestServiceDep = Annotated[type(client_request_service), Depends(get_client_request_service)]
+```
+
+### Custom exceptions
+```python
+class NotFoundError(AppException):
+    def __init__(self, resource: str, id: int):
+        super().__init__(f"{resource} {id} not found", "NOT_FOUND")
+```
+
+## Avoid
+
+- Sync database calls in async functions
+- Business logic in route handlers
+- Direct model imports across modules (use services)
+- Pydantic v1 syntax (`orm_mode`, `@validator`)
+- Hardcoded configuration values
+- Catching generic `Exception` without re-raising
+- Raw SQL queries (use SQLAlchemy)
+- Circular imports between modules
+
+## Naming Conventions
+
+- Module folders: `snake_case` (`client_request`, `distribution`)
+- Files: `snake_case.py`
+- Routes: `/api/v1/{module-name}/resource` (kebab-case in URLs)
+- DB tables: `snake_case`, plural (`client_requests`, `distributions`, `intakes`, `payments`)
+- Schemas: `ResourceCreate`, `ResourceUpdate`, `ResourceResponse`
+- Service functions: `get_request_by_id()`, `create_request()`, `list_requests()`
+
+## Testing
+
+```
+tests/
+├── conftest.py                  # Shared fixtures, test db setup
+├── modules/
+│   ├── client_request/
+│   │   ├── test_api.py
+│   │   └── test_services.py
+│   ├── distribution/
+│   ├── intake/
+│   └── payment/
+└── integration/                 # Cross-module integration tests
+    └── test_request_to_payment_flow.py
+```
+
+### Unit test (mock other modules)
+```python
+@pytest.mark.asyncio
+async def test_distribute_request_success():
+    mock_db = AsyncMock()
+    mock_request = ClientRequest(id=1, status="pending")
+
+    with patch.object(client_request_service, "get_request_by_id", return_value=mock_request):
+        result = await distribution_service.distribute_request(mock_db, request_id=1)
+
+    assert result.request_id == 1
+    mock_db.commit.assert_called_once()
+```
+
+### Integration test (real services)
+```python
+@pytest.mark.asyncio
+async def test_full_request_flow(test_db: AsyncSession):
+    # Create request
+    request = await client_request_service.create_request(test_db, request_data)
+
+    # Distribute
+    distribution = await distribution_service.distribute_request(test_db, request.id)
+
+    # Process intake
+    intake = await intake_service.process_intake(test_db, distribution.id)
+
+    # Complete payment
+    payment = await payment_service.create_payment(test_db, intake.id)
+
+    assert payment.status == "completed"
+```
+
+## Security
+
+- Validate all inputs via Pydantic
+- Use `Depends(get_current_user)` for auth
+- Never hardcode secrets
+- Use environment variables via Pydantic Settings
+- Parameterized queries only (SQLAlchemy default)
+
+## Common Commands
+- **Setup & Execution**:
+    - `make install`: Install dependencies using `uv`.
+    - `make run`: Start the development server with auto-reload.
+    - `make test`: Run the pytest test suite.
+    - `make lint`: Run Ruff for linting and formatting.
+- **Creating a New Feature**:
+    - `make startapp name=<feature_name>`: Scaffolds a new app module in `src/app/`.
+- **Database Migrations**:
+    - `make makemigrations`: Generate a new Alembic migration file.
+    - `make migrate`: Apply migrations to the database.
+- **Docker**:
+    - Use `make docker-build`, `docker-up`, and `docker-migrate` for containerized development and deployment.

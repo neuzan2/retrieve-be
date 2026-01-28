@@ -23,7 +23,7 @@ from pathlib import Path
 
 # Define important project paths
 ROOT = Path(__file__).resolve().parents[1]  # repository root
-SRC_APP = ROOT / "src" / "app"
+SRC_MODULE = ROOT / "src" / "modules"
 TESTS_DIR = ROOT / "tests"
 TEMPLATE_DIR = ROOT / "scripts" / "_scratch" / "app_template"
 
@@ -38,7 +38,7 @@ def to_class_name(name: str) -> str:
 
 
 def process_template_file(
-        src_path: Path, dest_path: Path, app_name: str, class_name: str, force: bool = False
+    src_path: Path, dest_path: Path, app_name: str, class_name: str, force: bool = False
 ):
     """
     Read a template file, replace placeholders, and write to destination.
@@ -70,23 +70,27 @@ def process_template_file(
 
 
 def main() -> None:
-    """Parse arguments and create a new app from templates."""
-    parser = argparse.ArgumentParser(description="Create a new app under src/app using templates")
-    parser.add_argument("name", help="App name (snake_case). Example: my_feature")
-    parser.add_argument("-f", "--force", action="store_true", help="Overwrite existing files")
+    """Parse arguments and create a new module from templates."""
+    parser = argparse.ArgumentParser(
+        description="Create a new module under src/modules using templates"
+    )
+    parser.add_argument("name", help="Module name (snake_case). Example: my_feature")
+    parser.add_argument(
+        "-f", "--force", action="store_true", help="Overwrite existing files"
+    )
     args = parser.parse_args()
 
     name = args.name.strip()
     if not VALID_NAME.match(name):
         parser.error(
-            "App name must be snake_case: lowercase letters, digits and underscores, starting with a letter or underscore"
+            "Module name must be snake_case: lowercase letters, digits and underscores, starting with a letter or underscore"
         )
 
     if not TEMPLATE_DIR.exists():
         print(f"Error: Template directory not found at {TEMPLATE_DIR}")
         sys.exit(1)
 
-    app_dir = SRC_APP / name
+    app_dir = SRC_MODULE / name
     class_name = to_class_name(name)
 
     print(f"Creating app '{name}'...")
@@ -111,9 +115,9 @@ def main() -> None:
 
         # Determine destination path
         if rel_path.parts[0] == "tests":
-            # Files in 'tests' folder go to tests/app/<app_name>/
+            # Files in 'tests' folder go to tests/modules/<app_name>/
             dest_rel_path = rel_path.relative_to("tests").parent / file_name
-            dest_path = TESTS_DIR / "app" / name / dest_rel_path
+            dest_path = TESTS_DIR / "modules" / name / dest_rel_path
         else:
             dest_rel_path = rel_path.parent / file_name
             dest_path = app_dir / dest_rel_path

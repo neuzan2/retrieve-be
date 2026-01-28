@@ -16,20 +16,5 @@
     "python.testing.cwd": "${workspaceFolder}/tests",
     "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    "files.exclude": {
-        ".git": true,
-        "**/.git": false,
-        "out": true, // set this to true to hide the "out" folder with the compiled JS files
-        "dist": true,
-        "**/*.pyc": true,
-        ".nyc_output": true,
-        "obj": true,
-        "bin": true,
-        "**/__pycache__": true,
-        "**/node_modules": true,
-        ".vscode-test": false,
-        ".vscode test": false,
-        "**/.mypy_cache/**": true
-    },
     "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }

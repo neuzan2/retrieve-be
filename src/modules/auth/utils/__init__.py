@@ -2,11 +2,11 @@
 Utility modules for the authentication package.
 """
 
-from src.app.auth.utils.dependencies import (
+from src.modules.auth.utils.dependencies import (
     get_current_active_user,
     get_current_user,
 )
-from src.app.auth.utils.security import (
+from src.modules.auth.utils.security import (
     create_access_token,
     create_refresh_token,
     get_password_hash,

@@ -13,8 +13,8 @@ project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
 
 
+from shared.models.base import Base  # noqa: E402
 from src.config import settings  # noqa: E402
-from src.db.base import Base  # noqa: E402
 
 # Alembic Config object, provides access to .ini file values
 config = context.config

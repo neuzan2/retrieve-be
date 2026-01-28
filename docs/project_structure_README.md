@@ -85,12 +85,12 @@ This directory contains all runtime application code.
 
 ---
 
-## 7. Application Modules (`src/app/`)
+## 7. Application Modules (`src/modules/`)
 
 Holds all feature-based modules. Each feature is self-contained and follows a consistent internal structure.
 
 ```
-<feature_app>/
+<module_name>/
  ├── enum/
  ├── models/
  ├── schemas/
@@ -134,7 +134,7 @@ What needs to be consider while creating endpoints?
 
 Example:
 
-```jsx
+```python
 ...
 from fastapi.router import APIRouter
 
@@ -314,7 +314,7 @@ retrieve/
 │   ├── __init__.py
 │   ├── [main.py](http://main.py/)
 │   │
-│   ├── app/
+│   ├── modules/
 │   │   ├── __init__.py
 │   │   └── <feature_app>/
 │   │       ├── __init__.py

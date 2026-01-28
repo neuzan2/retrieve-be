@@ -59,7 +59,7 @@ class Settings(BaseSettings):
 
     @cached_property
     def APP_DIR(self) -> Path:
-        return self.BASE_DIR / "src/app"
+        return self.BASE_DIR / "src/modules"
 
 
 @lru_cache()

@@ -8,11 +8,11 @@ from typing import Optional, Tuple
 
 from sqlalchemy.orm import Query, Session
 
-from src.app.auth.models.auth import TokenBlacklist, User
-from src.app.auth.repositories.user import UserRepository
-from src.app.auth.schemas.token import Token
-from src.app.auth.schemas.user import UserCreate
-from src.app.auth.utils.security import (
+from src.modules.auth.models.auth import TokenBlacklist, User
+from src.modules.auth.repositories.user import UserRepository
+from src.modules.auth.schemas.token import Token
+from src.modules.auth.schemas.user import UserCreate
+from src.modules.auth.utils.security import (
     create_access_token,
     create_refresh_token,
     verify_password,

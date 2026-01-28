@@ -18,11 +18,6 @@ This is a production-ready FastAPI backend project, initialized with best practi
 - [x] Redis ≥ 7.1.0
 - [x] Celery ≥ 5.6.2
 
-**Data Processing (optional)**
-- [ ] XlsxWriter ≥ 3.x
-- [ ] Pandas ≥ 2.x
-- [ ] Redshift Connector ≥ 2.x
-
 **Dev Tools**
 - [x] UV (dependency + lockfile management)
 - [x] Ruff (format + lint)

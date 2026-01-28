@@ -9,9 +9,9 @@ from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query
 
-from src.app.auth.models.auth import User
-from src.app.auth.schemas.user import UserCreate, UserUpdate
-from src.app.auth.utils.security import get_password_hash
+from src.modules.auth.models.auth import User
+from src.modules.auth.schemas.user import UserCreate, UserUpdate
+from src.modules.auth.utils.security import get_password_hash
 
 
 class UserRepository:

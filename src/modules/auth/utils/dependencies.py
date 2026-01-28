@@ -6,10 +6,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from src.app.auth.models.auth import TokenBlacklist, User
-from src.app.auth.schemas.token import TokenData
-from src.app.auth.utils.security import verify_token
-from src.db.session import get_db
+from src.db import get_db
+from src.modules.auth.models.auth import TokenBlacklist, User
+from src.modules.auth.schemas.token import TokenData
+from src.modules.auth.utils.security import verify_token
 
 # OAuth2 scheme for token extraction from Authorization header
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

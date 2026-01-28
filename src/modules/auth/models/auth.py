@@ -5,7 +5,7 @@ User database model.
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 
-from src.db.base import Base
+from src.shared.models.base import Base
 
 
 class User(Base):
